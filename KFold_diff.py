@@ -91,10 +91,6 @@ Loss = []
 
 dataset = [data1, data2, data3, data4, data5, data6]
 
-gc = CrystalGraph(bond_converter=GaussianDistance(
-    np.linspace(0, 5, 100), 0.5), cutoff=10)
-model = MEGNetModel(100, 2, graph_converter=gc)
-
 for i in range(6):
     test_data = dataset[i]
     train_vali_data = []
@@ -140,6 +136,10 @@ for i in range(6):
 
     with tf.device('/gpu:0'):
 
+        gc = CrystalGraph(bond_converter=GaussianDistance(
+            np.linspace(0, 5, 100), 0.5), cutoff=10)
+        model = MEGNetModel(100, 2, graph_converter=gc)
+
         scaler = StandardScaler.from_training_data(train_structures, train_labels, is_intensive=False)
         model.target_scaler = scaler
         model.train(train_structures, train_labels, vali_structures, vali_labels,
@@ -150,12 +150,13 @@ for i in range(6):
 
         prediction = []
 
-        for j in range(len(test_structures)):
-            pre = model.predict_structure(test_structures[j])
+        predict = model.predict_structure(test_structures)
+
+        for j, delE in enumerate(predict):
             atoms_test = test_data[j][0]
             atoms_list = atoms_test.get_atomic_numbers()
             Fe_num, C_num = get_atoms(atoms_list)
-            prediction.append(pre + Fe_num * Fe + C_num * C)
+            prediction.append(delE + Fe_num * Fe + C_num * C)
 
     loss = loss_mae(prediction, test_labels)
     Loss.append(loss)
