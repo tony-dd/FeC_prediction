@@ -46,10 +46,6 @@ Loss = []
 
 dataset = [data1, data2, data3, data4, data5, data6]
 
-gc = CrystalGraph(bond_converter=GaussianDistance(
-    np.linspace(0, 5, 100), 0.5), cutoff=10)
-model = MEGNetModel(100, 2, graph_converter=gc)
-
 for i in range(6):
     test_data = dataset[i]
     train_vali_data = []
@@ -77,6 +73,10 @@ for i in range(6):
     vali_labels = train_vali_labels[int(len(train_vali_labels) * 0.9):]
 
     with tf.device('/gpu:1'):
+
+        gc = CrystalGraph(bond_converter=GaussianDistance(
+                np.linspace(0, 5, 100), 0.5), cutoff=10)
+        model = MEGNetModel(100, 2, graph_converter=gc)
 
         scaler = StandardScaler.from_training_data(train_structures, train_labels, is_intensive=False)
         model.target_scaler = scaler
