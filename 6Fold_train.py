@@ -1,9 +1,11 @@
 import tensorflow as tf
 import numpy as np
 import itertools
+import logging
 from numpy import mean
 import pickle
 import random
+import logging
 from megnet.models import MEGNetModel
 from megnet.data.graph import GaussianDistance
 from megnet.data.crystal import CrystalGraph
@@ -12,6 +14,11 @@ from read import get_atoms
 from scipy import linalg
 from pymatgen.io.ase import AseAtomsAdaptor
 aaa = AseAtomsAdaptor()
+
+RANDOM_SEED = 0
+random.seed(RANDOM_SEED)
+np.random.seed(RANDOM_SEED)
+tf.random.set_seed(RANDOM_SEED)
 
 def loss_mae(l1, l2):
     err = 0
@@ -88,8 +95,33 @@ for i in range(6):
 
         prediction = model.predict_structures(test_structures)
 
+        name = '6Fold_model' + str(i+1)
+        model.save_model(name + '.hdf5')
+
     loss = loss_mae(prediction, test_labels)
     Loss.append(loss)
+
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s: - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S')
+
+    # 使用FileHandler输出到文件
+    fh = logging.FileHandler('log.txt')
+    fh.setLevel(logging.DEBUG)
+    fh.setFormatter(formatter)
+
+    # 使用StreamHandler输出到屏幕
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    ch.setFormatter(formatter)
+
+    # 添加两个Handler
+    logger.addHandler(ch)
+    logger.addHandler(fh)
+    logger.info(loss)
+    logger.info(Loss)
 
 print('Loss:', Loss)
 print('MAE:', np.mean(Loss))
