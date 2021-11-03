@@ -43,4 +43,4 @@ with tf.device('/gpu:0'):
     model.target_scaler = scaler
     model.train(train_structures, train_targets, vali_structures, vali_targets, epochs=1000, batch_size=256, verbose=2, patience=10)
 
-model.save_model('/data2/deh/model/seed2_FeC_megnet_model_epoch1000_batch256_patience_10.hdf5')
+model.save_model('/data2/deh/model/seed0_FeC_megnet_model_epoch1000_batch256_patience_10.hdf5')
