@@ -13,8 +13,8 @@ from tensorflow.keras.layers import Dense, Input, Concatenate, Add, Embedding, D
 #from keras.layers import Dense, Input, Concatenate, Add, Embedding, Dropout
 from megnet.layers import MEGNetLayer, Set2Set
 from megnet.activations import softplus2
-from keras.regularizers import l2
-from keras.backend import int_shape
+from tensorflow.keras.regularizers import l2
+from tensorflow.keras.backend import int_shape
 from tensorflow.keras.models import Model
 from megnet.callbacks import ModelCheckpointMAE, ManualStop, ReduceLRUponNan
 from megnet.data.graph import GraphBatchDistanceConvert, GraphBatchGenerator, GaussianDistance
@@ -604,22 +604,13 @@ def process(test_data):
         structures.append(struct)
     return structures
 
-f1 = open('/data2/deh/data/KF6/test_data1.pkl', 'rb')
-data1 = pickle.load(f1)
-f2 = open('/data2/deh/data/KF6/test_data2.pkl', 'rb')
-data2 = pickle.load(f2)
-f3 = open('/data2/deh/data/KF6/test_data3.pkl', 'rb')
-data3 = pickle.load(f3)
-f4 = open('/data2/deh/data/KF6/test_data4.pkl', 'rb')
-data4 = pickle.load(f4)
-f5 = open('/data2/deh/data/KF6/test_data5.pkl', 'rb')
-data5 = pickle.load(f5)
-f6 = open('/data2/deh/data/KF6/test_data6.pkl', 'rb')
-data6 = pickle.load(f6)
+dataset = []
 
-dataset = [data1, data2, data3, data4, data5, data6]
-
-print(len(data1), len(data2), len(data3), len(data4), len(data5), len(data6))
+for i in range(9):
+    f = open('/data2/deh/data/KF9/test_data' + str(i+1) + '.pkl', 'rb')
+    data = pickle.load(f)
+    print(len(data))
+    dataset.append(data)
 
 l = []
 
@@ -627,15 +618,15 @@ for i in range(len(dataset)):
     structures = process(dataset[i])
     predicted_features = [model_without_last_3layers.predict_structure(structure) for structure in structures]
     print(len(predicted_features))
-    pca = PCA(n_components=5)
+    pca = PCA(n_components=4)
     pca_vec = pca.fit_transform(predicted_features)
     l.append([pca_vec])
 
 print(len(l))
 
-dict = {'Fe1':l[0], 'Fe2':l[1], 'Fe3':l[2], 'Fe4':l[3], 'Fe5':l[4], 'Fe6-':l[5]}
+dict = {'Fe1':l[0], 'Fe2':l[1], 'Fe3':l[2], 'Fe4':l[3], 'Fe5':l[4], 'Fe6':l[5], 'Fe7':l[6], 'Fe8':l[7], 'Fe9':l[8]}
 
-with open('FeC_pca_to_5.pkl', 'wb') as f:
+with open('9fold_FeC_pca_to_4.pkl', 'wb') as f:
     pickle.dump(dict, f)
 
 
