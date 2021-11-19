@@ -95,7 +95,7 @@ for i in range(len(dataset)):
 
         prediction = model.predict_structures(test_structures)
 
-        name = 'cuda0_9Fold_model_patience10_' + str(i+1)
+        name = 'cuda0_9Fold_megnet_patience10_' + str(i+1)
         model.save_model(name + '.hdf5')
 
     loss = loss_mae(prediction, test_labels)
