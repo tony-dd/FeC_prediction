@@ -25,8 +25,6 @@ import os
 from warnings import warn
 from monty.serialization import dumpfn, loadfn
 
-
-
 # original class Graph Model from Megnet github used to defined a new Megnet model just after
 class GraphModel:
     """
