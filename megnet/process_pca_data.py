@@ -8,7 +8,6 @@ l = []
 for k, value in data.items():
     l.append(list(value[0]))
 
-
 for m in range(len(l)):
 
     test = l[m]
